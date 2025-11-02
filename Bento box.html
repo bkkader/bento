@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Magic Bento Pro - 5 Box Layout</title>
+<style>
+:root {
+  --glow-color: 132, 0, 255;
+  --text-color: #fff;
+  --bg-dark: radial-gradient(circle at top, #1a002c 0%, #090010 100%);
+  --card-bg: #100020;
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-dark);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  overflow: hidden;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-areas:
+    "main main side1 side2"
+    "main main side3 side4";
+  gap: 1.2em;
+  width: 92%;
+  max-width: 1200px;
+  padding: 2em;
+}
+
+/* Large main card */
+.magic-bento-card.main {
+  grid-area: main;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(145deg, #200040, #0e001e);
+  height: 600px;
+  width: 550px;
+}
+
+/* Normal small cards */
+.magic-bento-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5em;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 300px;
+}
+
+.magic-bento-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.magic-bento-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 6px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Content */
+.magic-bento-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.magic-bento-card__icon {
+  font-size: 2rem;
+  color: rgba(var(--glow-color), 1);
+}
+
+.magic-bento-card__label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.magic-bento-card__title {
+  font-size: 1.5rem;
+  margin: 0.5em 0 0.2em;
+}
+
+.magic-bento-card__description {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin-top: 1em;
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(var(--glow-color),1), rgba(var(--glow-color),0.3));
+  width: 0;
+  border-radius: 3px;
+}
+
+.card-btn {
+  margin-top: 1em;
+  align-self: flex-start;
+  padding: 0.5em 1.2em;
+  border: none;
+  border-radius: 8px;
+  background: rgba(var(--glow-color), 0.2);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.card-btn:hover {
+  background: rgba(var(--glow-color), 0.4);
+  transform: scale(1.05);
+}
+
+/* Spotlight */
+#spotlight {
+  position: fixed;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(132,0,255,0.15) 0%,
+    rgba(132,0,255,0.08) 15%,
+    rgba(132,0,255,0.04) 25%,
+    rgba(132,0,255,0.02) 40%,
+    rgba(132,0,255,0.01) 65%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  z-index: 1000;
+  mix-blend-mode: screen;
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(132, 0, 255, 1);
+  box-shadow: 0 0 8px rgba(132, 0, 255, 0.8);
+  pointer-events: none;
+}
+
+/* Responsive fix */
+@media (max-width: 800px) {
+  .card-grid {
+    grid-template-areas:
+      "main"
+      "side1"
+      "side2"
+      "side3"
+      "side4";
+  }
+}
+</style>
+</head>
+<body>
+<div id="spotlight"></div>
+
+<div class="card-grid">
+  <!-- Large Main Box -->
+  <div class="magic-bento-card main">
+    <div class="magic-bento-card__header">
+      <div class="magic-bento-card__label">🚀 Featured</div>
+      <div class="magic-bento-card__icon">🌌</div>
+    </div>
+    <div class="magic-bento-card__content">
+      <h2 class="magic-bento-card__title">Project Dashboard</h2>
+      <p class="magic-bento-card__description">
+        Manage your entire workflow in one place — analytics, automation, collaboration, and insights with real-time data updates.
+      </p>
+      <div class="progress"><span style="width: 90%;"></span></div>
+      <button class="card-btn">Explore</button>
+    </div>
+  </div>
+
+  <!-- Four Smaller Boxes -->
+  <div class="magic-bento-card">
+    <div class="magic-bento-card__header">
+      <div class="magic-bento-card__label">📊 Insights</div>
+      <div class="magic-bento-card__icon">📈</div>
+    </div>
+    <h2 class="magic-bento-card__title">Analytics</h2>
+    <p class="magic-bento-card__description">See key trends and performance metrics instantly.</p>
+    <div class="progress"><span style="width: 75%;"></span></div>
+  </div>
+
+  <div class="magic-bento-card">
+    <div class="magic-bento-card__header">
+      <div class="magic-bento-card__label">⚙️ AI Tools</div>
+      <div class="magic-bento-card__icon">🤖</div>
+    </div>
+    <h2 class="magic-bento-card__title">Automation</h2>
+    <p class="magic-bento-card__description">Let intelligent bots streamline your workflow.</p>
+    <div class="progress"><span style="width: 60%;"></span></div>
+  </div>
+
+  <div class="magic-bento-card">
+    <div class="magic-bento-card__header">
+      <div class="magic-bento-card__label">🛡️ Security</div>
+      <div class="magic-bento-card__icon">🔐</div>
+    </div>
+    <h2 class="magic-bento-card__title">Protection</h2>
+    <p class="magic-bento-card__description">Advanced multi-layer encryption for all systems.</p>
+    <div class="progress"><span style="width: 95%;"></span></div>
+  </div>
+
+  <div class="magic-bento-card">
+    <div class="magic-bento-card__header">
+      <div class="magic-bento-card__label">🎨 Design</div>
+      <div class="magic-bento-card__icon">💡</div>
+    </div>
+    <h2 class="magic-bento-card__title">Creative Studio</h2>
+    <p class="magic-bento-card__description">Design visually stunning interfaces with live preview.</p>
+    <div class="progress"><span style="width: 80%;"></span></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+const spotlight = document.getElementById('spotlight');
+const cards = document.querySelectorAll('.magic-bento-card');
+
+// Spotlight follows mouse
+document.addEventListener('mousemove', e => {
+  gsap.to(spotlight, { left: e.clientX, top: e.clientY, duration: 0.15 });
+  spotlight.style.opacity = 0.6;
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect();
+    const relX = ((e.clientX - rect.left) / rect.width) * 100;
+    const relY = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--glow-x', `${relX}%`);
+    card.style.setProperty('--glow-y', `${relY}%`);
+    card.style.setProperty('--glow-intensity', '1');
+  });
+});
+
+// Particle, tilt & ripple effects
+cards.forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    for (let i = 0; i < 10; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * card.clientWidth + 'px';
+      p.style.top = Math.random() * card.clientHeight + 'px';
+      card.appendChild(p);
+      gsap.to(p, {
+        x: (Math.random() - 0.5) * 100,
+        y: (Math.random() - 0.5) * 100,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power2.out',
+        onComplete: () => p.remove()
+      });
+    }
+  });
+
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const rotateX = ((y - rect.height / 2) / rect.height) * -10;
+    const rotateY = ((x - rect.width / 2) / rect.width) * 10;
+    gsap.to(card, { rotateX, rotateY, duration: 0.2 });
+  });
+
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.5 });
+  });
+
+  card.addEventListener('click', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+      position:absolute;width:300px;height:300px;border-radius:50%;
+      background:radial-gradient(circle,rgba(132,0,255,0.4)0%,rgba(132,0,255,0.2)30%,transparent 70%);
+      left:${x-150}px;top:${y-150}px;pointer-events:none;z-index:100;`;
+    card.appendChild(ripple);
+    gsap.fromTo(ripple,{scale:0,opacity:1},{scale:1,opacity:0,duration:0.8,ease:'power2.out',onComplete:()=>ripple.remove()});
+  });
+});
+</script>
+</body>
+</html>
